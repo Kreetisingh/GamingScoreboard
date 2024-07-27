@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- ChangeSet for creating 'players' table -->
+    <changeSet id="1" author="Kreeti Singh">
+        <createTable tableName="players">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="player_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- ChangeSet for creating 'matches' table -->
+    <changeSet id="2" author="Kreeti Singh">
+        <createTable tableName="matches">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="match_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="match_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- ChangeSet for creating 'player_scores' table -->
+    <changeSet id="3" author="Kreeti Singh">
+        <createTable tableName="player_scores">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="player_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="match_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insert_timestamp" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign key constraints -->
+        <addForeignKeyConstraint
+                baseTableName="player_scores"
+                baseColumnNames="player_id"
+                constraintName="fk_player"
+                referencedTableName="players"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="player_scores"
+                baseColumnNames="match_id"
+                constraintName="fk_match"
+                referencedTableName="matches"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="4" author="Kreeti Singh">
+        <!-- Unique constraint on the combination of player_name and email -->
+        <addUniqueConstraint
+                columnNames="player_name, email"
+                constraintName="uk_player_name_email"
+                tableName="players"/>
+        <!-- Unique constraint on the combination of match_name and match_date -->
+        <addUniqueConstraint
+                columnNames="match_name, match_date"
+                constraintName="unique_match_name_date"
+                tableName="matches"/>
+    </changeSet>
+
+    <!-- Index creation for efficient querying -->
+    <changeSet id="5" author="Kreeti Singh">
+        <createIndex indexName="idx_player_scores_score_match_id" tableName="player_scores">
+            <column name="score"/>
+            <column name="match_id"/>
+        </createIndex>
+        <createIndex indexName="idx_matches_match_date" tableName="matches">
+            <column name="match_date"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
