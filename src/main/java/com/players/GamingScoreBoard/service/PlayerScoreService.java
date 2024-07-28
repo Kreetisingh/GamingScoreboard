@@ -1,14 +1,13 @@
 package com.players.GamingScoreBoard.service;
 
 import com.players.GamingScoreBoard.common.resource.PlayerScoreResponse;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Timestamp;
+import java.io.IOException;
 import java.util.List;
 
 public interface PlayerScoreService {
-    void readScoresFromFile();
-
-    void submitScore(String playerName, int score, String matchName, Timestamp matchDate, String playerEmail);
+    void readScoresFromFile(MultipartFile file) throws IOException;
 
     List<PlayerScoreResponse> getTopScores(int limit);
 }
